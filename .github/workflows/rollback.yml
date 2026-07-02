@@ -1,0 +1,10 @@
+name: Rollback CI Exchange OS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Rollback placeholder: repoint deployment alias to last known good release"
