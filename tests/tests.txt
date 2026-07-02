@@ -1,0 +1,32 @@
+# Tests
+
+## Test 1 - App loads and shows exchange dashboard [sanity]
+Viewport: desktop
+Description: Verifies the main CI Exchange OS dashboard renders correctly.
+
+Steps:
+1. Open the app
+2. Wait for the dashboard to load
+
+Expected: The CI Exchange OS title, hero, and market metrics are visible.
+
+## Test 2 - Primary CTAs open live surfaces
+Viewport: desktop
+Description: Verifies the main external links are present and usable.
+
+Steps:
+1. Open the app
+2. Find the GitHub, AppDeploy, and Canva buttons
+3. Open each link in a new tab
+
+Expected: Each button opens the expected external destination.
+
+## Test 3 - Mobile layout remains readable
+Viewport: mobile
+Description: Verifies the page adapts to a narrow viewport.
+
+Steps:
+1. Open the app on mobile
+2. Scroll through the dashboard
+
+Expected: Sections stack cleanly and text remains readable without horizontal scrolling.
