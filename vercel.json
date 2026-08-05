@@ -1,8 +1,6 @@
 {
-  "version": 2,
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
+  "buildCommand": "npm ci --legacy-peer-deps && npm run build",
+  "installCommand": "npm ci --legacy-peer-deps",
+  "framework": "next",
+  "nodeVersion": "18.x"
 }
