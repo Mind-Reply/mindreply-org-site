@@ -1,0 +1,23 @@
+name: Front Door Steward
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '59 * * * *'
+permissions:
+  contents: read
+  issues: write
+jobs:
+  frontdoor:
+    name: Editor / public-surface pulse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify portfolio charter
+        run: test -f docs/IDENTITY.md
+      - name: Inspect public information architecture
+        run: find . -maxdepth 2 -type f | sort | head -200
+      - name: Open bounded editorial note
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Front Door editorial exception" --body "The hourly public-surface check failed. Review navigation, metadata, or portfolio messaging before making broad SEO changes." || true
