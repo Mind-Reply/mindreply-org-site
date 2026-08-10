@@ -1,0 +1,25 @@
+name: Reality Gate
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '31 * * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify canonical commercial surface
+        run: |
+          set -euo pipefail
+          base='https://mind-reply.com'
+          for path in / /pricing /contact; do
+            curl --fail --silent --show-error --location --max-time 20 "$base$path" -o /dev/null
+          done
+          echo "MindReply canonical public journey responded successfully."
