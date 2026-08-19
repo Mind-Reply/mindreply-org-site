@@ -1,6 +1,6 @@
 import './styles.css';
 
-const auditUrl = 'https://mindreply-4cj9rb4o.manus.space/audit';
+const auditUrl = '/audit';
 
 const leakEvents = [
   ['Visitor asked about pricing', '12s ago', 'question'],
