@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mind-reply.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mind-reply.com/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mind-reply.com/es/" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mind-reply.com/pt-br/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mind-reply.com/de/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mind-reply.com/fr/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mind-reply.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="tr" href="https://mind-reply.com/tr/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://mind-reply.com/nl/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mind-reply.com/" />
+  </url>
+  <url><loc>https://mind-reply.com/es/</loc></url>
+  <url><loc>https://mind-reply.com/pt-br/</loc></url>
+  <url><loc>https://mind-reply.com/de/</loc></url>
+  <url><loc>https://mind-reply.com/fr/</loc></url>
+  <url><loc>https://mind-reply.com/ar/</loc></url>
+  <url><loc>https://mind-reply.com/tr/</loc></url>
+  <url><loc>https://mind-reply.com/nl/</loc></url>
+</urlset>
