@@ -1,6 +1,15 @@
 import './styles.css';
+import './operator-match.css';
+import './growth-layer.css';
+import { defaultLocale, getLocale, locales, suggestedLocale } from './locales';
+import { localizedContent } from './localized-content';
 
 const auditUrl = '/audit';
+const activeLocale = getLocale(document.documentElement.dataset.locale);
+const copy = activeLocale.copy;
+const content = localizedContent[activeLocale.code] ?? localizedContent.en;
+document.documentElement.lang = activeLocale.code;
+document.documentElement.dir = activeLocale.dir;
 
 const leakEvents = [
   ['Visitor asked about pricing', '12s ago', 'question'],
@@ -11,9 +20,9 @@ const leakEvents = [
 ];
 
 const packages = [
-  { number: '01', name: 'QuoteCapture', audience: 'For home services', copy: 'Captures job requests, service areas, urgency, and the cleanest next handoff.' },
-  { number: '02', name: 'Patient Intake', audience: 'For clinics & aesthetics', copy: 'Captures appointment intent and reception questions with safe, structured handoff.' },
-  { number: '03', name: 'Proposal Rescue', audience: 'For agencies & consultants', copy: 'Captures buyer questions, objections, and discovery-call intent before proposals stall.' },
+  { number: '01', name: 'QuoteCapture', audience: content.packageAudience[0], copy: content.packageCopy[0] },
+  { number: '02', name: 'Patient Intake', audience: content.packageAudience[1], copy: content.packageCopy[1] },
+  { number: '03', name: 'Proposal Rescue', audience: content.packageAudience[2], copy: content.packageCopy[2] },
 ];
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -28,25 +37,25 @@ app.innerHTML = `
         <span><strong>MindReply</strong><small>Revenue operators</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#leak">The leak</a>
-        <a href="#match">Operator match</a>
-        <a href="#operators">Operators</a>
-        <a href="#sprint">Setup sprint</a>
-        <a href="#status">Status</a>
+        <a href="#leak">${copy.navLeak}</a>
+        <a href="#match">${copy.navMatch}</a>
+        <a href="#operators">${copy.navOperators}</a>
+        <a href="#sprint">${copy.navSprint}</a>
+        <a href="#status">${copy.navStatus}</a>
       </nav>
-      <a class="button compact" href="${auditUrl}">Request Leak Audit</a>
+      <a class="button compact" href="${auditUrl}">${copy.audit}</a>
     </header>
 
     <section id="top" class="hero reveal">
       <div class="hero-copy">
-        <span class="eyebrow">Website Leak Audit + WebChat Operator Setup</span>
-        <h1>Your website is leaking customers while <em>nobody answers.</em></h1>
-        <p>MindReply installs Website Chat Operators that capture, qualify, and route warm visitors before attention disappears.</p>
+        <span class="eyebrow">${copy.heroEyebrow}</span>
+        <h1>${copy.heroTitle}</h1>
+        <p>${copy.heroDescription}</p>
         <div class="cta-row">
-          <a class="button" href="${auditUrl}">Request Leak Audit <span>→</span></a>
-          <a class="button secondary" href="#operators">See operator packages</a>
+          <a class="button" href="${auditUrl}">${copy.audit} <span>→</span></a>
+          <a class="button secondary" href="#operators">${copy.packages}</a>
         </div>
-        <p class="microcopy">Built for service businesses, clinics, and agencies that need a clearer visitor handoff.</p>
+        <p class="microcopy">${content.microcopy}</p>
       </div>
       <aside class="monitor" aria-label="MindReply Leak Monitor">
         <div class="monitor-head"><span>Leak Monitor</span><i></i></div>
@@ -57,84 +66,94 @@ app.innerHTML = `
       </aside>
     </section>
 
+    <section class="handoff-visual reveal" aria-label="${copy.handoffEyebrow}">
+      <div class="handoff-panel">
+        <span class="eyebrow">${copy.handoffEyebrow}</span>
+        <h2>${copy.handoffTitle}</h2>
+        <div class="handoff-route">
+          <article class="handoff-node"><b>01</b><strong>${copy.handoffVisitor}</strong></article><span class="handoff-arrow" aria-hidden="true"></span>
+          <article class="handoff-node ai"><b>AI</b><strong>${copy.handoffAi}</strong></article><span class="handoff-arrow" aria-hidden="true"></span>
+          <article class="handoff-node"><b>03</b><strong>${copy.handoffAction}</strong></article>
+        </div>
+      </div>
+    </section>
+
     <section id="leak" class="section leak-section reveal">
-      <div class="section-heading"><span class="eyebrow">The Revenue Leak</span><h2>Where websites lose customers.</h2></div>
+      <div class="section-heading"><span class="eyebrow">${content.leakEyebrow}</span><h2>${content.leakTitle}</h2></div>
       <div class="leak-grid">
-        ${[
-          ['01', 'No Answer', 'Visitors have buying questions, but the website only gives a form, phone number, or generic copy.'],
-          ['02', 'Slow Response', 'A visitor signals intent, but the business responds after interest has cooled.'],
-          ['03', 'Weak Qualification', 'The business receives vague messages instead of useful service, location, urgency, and contact details.'],
-          ['04', 'Broken Handoff', 'The conversation never becomes a quote request, appointment request, or booked next step.'],
-        ].map(([id, title, copy]) => `<article class="leak-card"><span>${id}</span><h3>${title}</h3><p>${copy}</p></article>`).join('')}
+        ${content.leaks.map((item, index) => `<article class="leak-card"><span>${String(index + 1).padStart(2, '0')}</span><h3>${item.title}</h3><p>${item.copy}</p></article>`).join('')}
       </div>
     </section>
 
     <section id="operators" class="section reveal">
-      <div class="section-heading centered"><span class="eyebrow">Operator Packages</span><h2>Three operators. One clear handoff.</h2></div>
+      <div class="section-heading centered"><span class="eyebrow">${content.operatorsEyebrow}</span><h2>${content.operatorsTitle}</h2></div>
       <div class="package-grid">
-        ${packages.map((item) => `<article class="package-card"><span class="package-number">${item.number}</span><h3>${item.name}</h3><strong>${item.audience}</strong><p>${item.copy}</p><a href="${auditUrl}">Explore ${item.name} <span>→</span></a></article>`).join('')}
+        ${packages.map((item) => `<article class="package-card"><span class="package-number">${item.number}</span><h3>${item.name}</h3><strong>${item.audience}</strong><p>${item.copy}</p><a href="${auditUrl}">${content.packageAction} ${item.name} <span>→</span></a></article>`).join('')}
       </div>
     </section>
 
     <section id="match" class="match-section reveal">
       <div class="match-intro">
-        <span class="eyebrow">Interactive Operator Match</span>
-        <h2>Choose the leak. See the first handoff to fix.</h2>
-        <p>Answer two operational questions to surface the right MindReply operator and a focused audit brief. This quick match runs in your browser and does not collect or store your responses.</p>
+        <span class="eyebrow">${copy.navMatch}</span>
+        <h2>${copy.handoffTitle}</h2>
+        <p>${content.matchDescription}</p>
       </div>
-      <div class="match-console" aria-live="polite">
-        <div class="match-step">
+      <div class="match-console">
+        <div class="match-progress" aria-label="${copy.navMatch}">
+          <div class="match-progress-copy"><span id="matchProgressLabel">${content.progress.business}</span><strong id="matchProgressTitle">${content.progress.chooseBusiness}</strong></div>
+          <div id="matchProgressBar" class="match-progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1" aria-valuetext="${content.progress.business}: ${content.progress.chooseBusiness}"><span></span></div>
+          <ol class="match-progress-steps" aria-hidden="true"><li class="active"><b>1</b><span>${content.progress.businessLabel}</span></li><li><b>2</b><span>${content.progress.leakLabel}</span></li><li><b>✓</b><span>${content.progress.matchLabel}</span></li></ol>
+          <p id="matchProgressLive" class="sr-only" aria-live="polite">${content.progress.business}: ${content.progress.chooseBusiness}.</p>
+        </div>
+        <div id="matchBusinessStep" class="match-step match-stage is-current">
           <span>01</span>
-          <div><strong>Your business model</strong><p>Where do visitor questions usually turn into revenue?</p></div>
+          <div><strong>${content.progress.chooseBusiness}</strong><p>${content.businessQuestion}</p></div>
           <div class="match-options" data-group="business">
-            <button type="button" data-value="home">Home services</button>
-            <button type="button" data-value="clinic">Clinic or aesthetics</button>
-            <button type="button" data-value="agency">Agency or consulting</button>
+            <button type="button" data-value="home" aria-pressed="false">${content.businessOptions[0]}</button>
+            <button type="button" data-value="clinic" aria-pressed="false">${content.businessOptions[1]}</button>
+            <button type="button" data-value="agency" aria-pressed="false">${content.businessOptions[2]}</button>
           </div>
         </div>
-        <div class="match-step">
+        <div id="matchLeakStep" class="match-step match-stage" hidden>
           <span>02</span>
-          <div><strong>The biggest drop-off</strong><p>Which visitor moment currently costs you the most?</p></div>
+          <div><strong>${content.progress.chooseLeak}</strong><p>${content.leakQuestion}</p></div>
           <div class="match-options" data-group="leak">
-            <button type="button" data-value="question">Questions go unanswered</button>
-            <button type="button" data-value="slow">Follow-up arrives too late</button>
-            <button type="button" data-value="handoff">Interest never becomes a next step</button>
+            <button type="button" data-value="question" aria-pressed="false">${content.leakOptions[0]}</button>
+            <button type="button" data-value="slow" aria-pressed="false">${content.leakOptions[1]}</button>
+            <button type="button" data-value="handoff" aria-pressed="false">${content.leakOptions[2]}</button>
           </div>
+          <button id="matchBack" class="match-back" type="button">${content.back}</button>
         </div>
-        <div id="matchResult" class="match-result" aria-live="polite">
-          <span class="match-status">Awaiting two selections</span>
-          <div><p class="eyebrow">Your operator path</p><h3>Start with the visitor moment that is leaking.</h3><p>Choose your business model and leak point to generate a focused starting brief.</p></div>
-          <a id="matchAuditLink" class="button secondary" href="${auditUrl}">Open the audit <span>→</span></a>
-        </div>
+        <div id="matchResult" class="match-result" aria-live="polite" tabindex="-1" hidden></div>
       </div>
     </section>
 
     <section id="sprint" class="sprint reveal">
-      <div><span class="eyebrow">The Setup Sprint</span><h2>Find the leak. Map the response. Launch the operator.</h2><p>A focused implementation that moves from visitor questions to qualified next actions without a drawn-out project.</p></div>
+      <div><span class="eyebrow">${content.sprintEyebrow}</span><h2>${content.sprintTitle}</h2><p>${content.sprintCopy}</p></div>
       <ol>
         <li><b>01</b><span>Audit</span></li><li><b>02</b><span>Map</span></li><li><b>03</b><span>Build</span></li><li><b>04</b><span>Launch</span></li><li><b>05</b><span>Improve</span></li>
       </ol>
-      <a class="button" href="${auditUrl}">Start with the audit <span>→</span></a>
+      <a class="button" href="${auditUrl}">${content.sprintAction} <span>→</span></a>
     </section>
 
     <section id="status" class="status reveal">
-      <div><span class="eyebrow">Operator Status</span><h2>Ready when visitor intent arrives.</h2></div>
+      <div><span class="eyebrow">${content.statusEyebrow}</span><h2>${content.statusTitle}</h2></div>
       <div class="status-list">
-        ${packages.map((item) => `<div><i></i><span>${item.name}</span><small>Operational</small></div>`).join('')}
+        ${packages.map((item) => `<div><i></i><span>${item.name}</span><small>${content.operational}</small></div>`).join('')}
       </div>
     </section>
 
     <section class="final-cta reveal">
-      <span class="eyebrow">Stop losing warm visitors</span><h2>Find your highest-value leak first.</h2><p>Request a MindReply Website Leak Audit and we will map the next best handoff.</p><a class="button" href="${auditUrl}">Request Leak Audit <span>→</span></a>
+      <span class="eyebrow">${content.finalEyebrow}</span><h2>${content.finalTitle}</h2><p>${content.finalCopy}</p><a class="button" href="${auditUrl}">${copy.audit} <span>→</span></a>
     </section>
 
-    <footer><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">M</span><span><strong>MindReply</strong><small>Revenue operators</small></span></a><p>© 2026 MindReply · WebChat operators for websites that should not lose warm visitors.</p></footer>
+    <footer><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">M</span><span><strong>MindReply</strong><small>Revenue operators</small></span></a><div class="locale-footer"><div class="locale-footer-copy"><strong>${copy.languageLabel}</strong><p>${copy.languageHelp}</p></div><div class="locale-grid" aria-label="${copy.languageLabel}">${locales.map((locale) => `<a class="locale-link" href="${locale.path}" lang="${locale.code}" aria-current="${locale.code === activeLocale.code ? 'page' : 'false'}"><span class="locale-flag" aria-hidden="true">${locale.flag}</span><span>${locale.nativeLabel}</span></a>`).join('')}</div><p id="localeHint" class="locale-hint"></p></div></footer>
   </main>
-  <button id="chatTrigger" class="chat-trigger" aria-expanded="false"><span>◌</span> Ask MindReply Operator</button>
+  <button id="chatTrigger" class="chat-trigger" aria-expanded="false"><span>◌</span> ${content.chatButton}</button>
   <section id="chatPanel" class="chat-panel" aria-label="MindReply Operator" hidden>
-    <div class="chat-head"><div><strong>MindReply Operator</strong><small>Guided next steps</small></div><button id="chatClose" aria-label="Close operator chat">×</button></div>
-    <div id="chatMessages" class="chat-messages"><p class="assistant">Tell me your business type or where visitors stop converting. I will point you to the right next step.</p></div>
-    <form id="chatForm"><input id="chatInput" placeholder="Ask about leads, operators, or the audit…" /><button aria-label="Send message">→</button></form>
+    <div class="chat-head"><div><strong>MindReply Operator</strong><small>${content.chatSubtitle}</small></div><button id="chatClose" aria-label="Close operator chat">×</button></div>
+    <div id="chatMessages" class="chat-messages"><p class="assistant">${copy.chatGreeting}</p></div>
+    <form id="chatForm"><input id="chatInput" placeholder="${copy.chatPlaceholder}" /><button aria-label="${content.send}">→</button></form>
   </section>
 `;
 
@@ -144,6 +163,11 @@ const close = document.querySelector<HTMLButtonElement>('#chatClose');
 const form = document.querySelector<HTMLFormElement>('#chatForm');
 const input = document.querySelector<HTMLInputElement>('#chatInput');
 const messages = document.querySelector<HTMLElement>('#chatMessages');
+const localeHint = document.querySelector<HTMLElement>('#localeHint');
+const browserPreferredLocale = suggestedLocale(navigator.languages?.length ? navigator.languages : [navigator.language]);
+if (localeHint && browserPreferredLocale.code !== activeLocale.code && activeLocale.code === defaultLocale.code) {
+  localeHint.innerHTML = `Based on your browser: <a href="${browserPreferredLocale.path}" lang="${browserPreferredLocale.code}">${browserPreferredLocale.flag} ${browserPreferredLocale.nativeLabel}</a>`;
+}
 
 const replyFor = (question: string) => {
   const value = question.toLowerCase();
@@ -167,7 +191,13 @@ form?.addEventListener('submit', (event) => {
 
 const matchState: { business: string; leak: string } = { business: '', leak: '' };
 const matchResult = document.querySelector<HTMLElement>('#matchResult');
-const matchAuditLink = document.querySelector<HTMLAnchorElement>('#matchAuditLink');
+const businessStage = document.querySelector<HTMLElement>('#matchBusinessStep');
+const leakStage = document.querySelector<HTMLElement>('#matchLeakStep');
+const progressBar = document.querySelector<HTMLElement>('#matchProgressBar');
+const progressLabel = document.querySelector<HTMLElement>('#matchProgressLabel');
+const progressTitle = document.querySelector<HTMLElement>('#matchProgressTitle');
+const progressLive = document.querySelector<HTMLElement>('#matchProgressLive');
+const progressSteps = [...document.querySelectorAll<HTMLLIElement>('.match-progress-steps li')];
 const matchProfiles: Record<string, { name: string; businessType: string; score: number; copy: string }> = {
   home: { name: 'QuoteCapture', businessType: 'Home Services', score: 78, copy: 'Capture service area, urgency, and job details before a visitor leaves for another provider.' },
   clinic: { name: 'Patient Intake', businessType: 'Clinic / Medical', score: 81, copy: 'Give appointment-minded visitors a clear, safe next step while easing reception handoff.' },
@@ -179,16 +209,48 @@ const leakCopy: Record<string, string> = {
   handoff: 'The transition from interest to next step is the primary handoff risk.',
 };
 
+const setSelectedOption = (button: HTMLButtonElement) => {
+  button.parentElement?.querySelectorAll<HTMLButtonElement>('button[data-value]').forEach((option) => {
+    const selected = option === button;
+    option.classList.toggle('selected', selected);
+    option.setAttribute('aria-pressed', String(selected));
+  });
+};
+
+const setProgress = (state: 'business' | 'leak' | 'complete') => {
+  const progress = state === 'business' ? { value: 1, width: '33.333%', label: content.progress.business, title: content.progress.chooseBusiness } : state === 'leak' ? { value: 2, width: '66.667%', label: content.progress.leak, title: content.progress.chooseLeak } : { value: 2, width: '100%', label: content.progress.complete, title: content.progress.ready };
+  progressBar?.style.setProperty('--match-progress', progress.width);
+  progressBar?.setAttribute('aria-valuenow', String(progress.value));
+  progressBar?.setAttribute('aria-valuetext', `${progress.label}: ${progress.title}`);
+  if (progressLabel) progressLabel.textContent = progress.label;
+  if (progressTitle) progressTitle.textContent = progress.title;
+  if (progressLive) progressLive.textContent = `${progress.label}: ${progress.title}.`;
+  progressSteps.forEach((step, index) => step.classList.toggle('active', index < (state === 'business' ? 1 : state === 'leak' ? 2 : 3)));
+};
+
+const moveToStage = (current: HTMLElement | null, next: HTMLElement | null) => {
+  if (!current || !next) return;
+  current.classList.add('is-leaving');
+  window.setTimeout(() => {
+    current.hidden = true;
+    current.classList.remove('is-current', 'is-leaving');
+    next.hidden = false;
+    next.classList.add('is-current', 'is-entering');
+    requestAnimationFrame(() => next.classList.remove('is-entering'));
+    next.querySelector<HTMLButtonElement>('button[data-value]')?.focus();
+  }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180);
+};
+
 const updateMatchResult = () => {
-  if (!matchResult || !matchAuditLink || !matchState.business || !matchState.leak) return;
+  if (!matchResult || !matchState.business || !matchState.leak) return;
   const profile = matchProfiles[matchState.business];
   const challenge = leakCopy[matchState.leak];
+  setProgress('complete');
   matchResult.classList.add('ready');
-  matchResult.innerHTML = `<span class="match-score"><b>${profile.score}</b><small>handoff focus</small></span><div><p class="eyebrow">Recommended operator · ${profile.name}</p><h3>${profile.name} is your clearest first move.</h3><p>${profile.copy} ${challenge}</p></div>`;
-  matchAuditLink.classList.remove('secondary');
-  matchAuditLink.textContent = 'Build my audit brief →';
-  matchAuditLink.href = `${auditUrl}?businessType=${encodeURIComponent(profile.businessType)}&challenge=${encodeURIComponent(`${profile.name}: ${challenge}`)}`;
-  matchResult.append(matchAuditLink);
+  matchResult.innerHTML = `<span class="match-score"><b>${profile.score}</b><small>handoff focus</small></span><div><p class="eyebrow">${content.progress.matchLabel} · ${profile.name}</p><h3>${profile.name}</h3><p>${profile.copy} ${challenge}</p></div><a class="button" href="${auditUrl}?businessType=${encodeURIComponent(profile.businessType)}&challenge=${encodeURIComponent(`${profile.name}: ${challenge}`)}">${content.auditBrief} <span>→</span></a><button id="matchRestart" class="match-back" type="button">${content.restart}</button>`;
+  moveToStage(leakStage, matchResult);
+  window.setTimeout(() => matchResult.focus(), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 210);
+  matchResult.querySelector<HTMLButtonElement>('#matchRestart')?.addEventListener('click', resetMatch);
 };
 
 document.querySelectorAll<HTMLButtonElement>('.match-options button').forEach((button) => {
@@ -197,7 +259,24 @@ document.querySelectorAll<HTMLButtonElement>('.match-options button').forEach((b
     const value = button.dataset.value;
     if (!group || !value) return;
     matchState[group] = value;
-    button.parentElement?.querySelectorAll('button').forEach((option) => option.classList.toggle('selected', option === button));
-    updateMatchResult();
+    setSelectedOption(button);
+    if (group === 'business') {
+      setProgress('leak');
+      moveToStage(businessStage, leakStage);
+    } else {
+      updateMatchResult();
+    }
   });
 });
+
+const resetMatch = () => {
+  matchState.business = '';
+  matchState.leak = '';
+  document.querySelectorAll<HTMLButtonElement>('.match-options button').forEach((button) => { button.classList.remove('selected'); button.setAttribute('aria-pressed', 'false'); });
+  setProgress('business');
+  if (matchResult) { matchResult.hidden = true; matchResult.classList.remove('ready', 'is-current', 'is-leaving'); }
+  if (leakStage) { leakStage.hidden = true; leakStage.classList.remove('is-current', 'is-leaving'); }
+  if (businessStage) { businessStage.hidden = false; businessStage.classList.add('is-current', 'is-entering'); requestAnimationFrame(() => businessStage.classList.remove('is-entering')); businessStage.querySelector<HTMLButtonElement>('button[data-value]')?.focus(); }
+};
+
+document.querySelector<HTMLButtonElement>('#matchBack')?.addEventListener('click', () => { setProgress('business'); moveToStage(leakStage, businessStage); });
