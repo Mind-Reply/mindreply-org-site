@@ -29,6 +29,7 @@ app.innerHTML = `
       </a>
       <nav aria-label="Primary navigation">
         <a href="#leak">The leak</a>
+        <a href="#match">Operator match</a>
         <a href="#operators">Operators</a>
         <a href="#sprint">Setup sprint</a>
         <a href="#status">Status</a>
@@ -72,6 +73,39 @@ app.innerHTML = `
       <div class="section-heading centered"><span class="eyebrow">Operator Packages</span><h2>Three operators. One clear handoff.</h2></div>
       <div class="package-grid">
         ${packages.map((item) => `<article class="package-card"><span class="package-number">${item.number}</span><h3>${item.name}</h3><strong>${item.audience}</strong><p>${item.copy}</p><a href="${auditUrl}">Explore ${item.name} <span>→</span></a></article>`).join('')}
+      </div>
+    </section>
+
+    <section id="match" class="match-section reveal">
+      <div class="match-intro">
+        <span class="eyebrow">Interactive Operator Match</span>
+        <h2>Choose the leak. See the first handoff to fix.</h2>
+        <p>Answer two operational questions to surface the right MindReply operator and a focused audit brief. This quick match runs in your browser and does not collect or store your responses.</p>
+      </div>
+      <div class="match-console" aria-live="polite">
+        <div class="match-step">
+          <span>01</span>
+          <div><strong>Your business model</strong><p>Where do visitor questions usually turn into revenue?</p></div>
+          <div class="match-options" data-group="business">
+            <button type="button" data-value="home">Home services</button>
+            <button type="button" data-value="clinic">Clinic or aesthetics</button>
+            <button type="button" data-value="agency">Agency or consulting</button>
+          </div>
+        </div>
+        <div class="match-step">
+          <span>02</span>
+          <div><strong>The biggest drop-off</strong><p>Which visitor moment currently costs you the most?</p></div>
+          <div class="match-options" data-group="leak">
+            <button type="button" data-value="question">Questions go unanswered</button>
+            <button type="button" data-value="slow">Follow-up arrives too late</button>
+            <button type="button" data-value="handoff">Interest never becomes a next step</button>
+          </div>
+        </div>
+        <div id="matchResult" class="match-result" aria-live="polite">
+          <span class="match-status">Awaiting two selections</span>
+          <div><p class="eyebrow">Your operator path</p><h3>Start with the visitor moment that is leaking.</h3><p>Choose your business model and leak point to generate a focused starting brief.</p></div>
+          <a id="matchAuditLink" class="button secondary" href="${auditUrl}">Open the audit <span>→</span></a>
+        </div>
       </div>
     </section>
 
@@ -129,4 +163,41 @@ form?.addEventListener('submit', (event) => {
   messages.insertAdjacentHTML('beforeend', `<p class="assistant">${replyFor(value)}</p>`);
   input.value = '';
   messages.scrollTop = messages.scrollHeight;
+});
+
+const matchState: { business: string; leak: string } = { business: '', leak: '' };
+const matchResult = document.querySelector<HTMLElement>('#matchResult');
+const matchAuditLink = document.querySelector<HTMLAnchorElement>('#matchAuditLink');
+const matchProfiles: Record<string, { name: string; businessType: string; score: number; copy: string }> = {
+  home: { name: 'QuoteCapture', businessType: 'Home Services', score: 78, copy: 'Capture service area, urgency, and job details before a visitor leaves for another provider.' },
+  clinic: { name: 'Patient Intake', businessType: 'Clinic / Medical', score: 81, copy: 'Give appointment-minded visitors a clear, safe next step while easing reception handoff.' },
+  agency: { name: 'Proposal Rescue', businessType: 'Agency / Consultant', score: 76, copy: 'Surface buyer questions and discovery-call intent before proposal momentum goes quiet.' },
+};
+const leakCopy: Record<string, string> = {
+  question: 'Unanswered buying questions are a primary handoff risk.',
+  slow: 'Response speed is the primary handoff risk.',
+  handoff: 'The transition from interest to next step is the primary handoff risk.',
+};
+
+const updateMatchResult = () => {
+  if (!matchResult || !matchAuditLink || !matchState.business || !matchState.leak) return;
+  const profile = matchProfiles[matchState.business];
+  const challenge = leakCopy[matchState.leak];
+  matchResult.classList.add('ready');
+  matchResult.innerHTML = `<span class="match-score"><b>${profile.score}</b><small>handoff focus</small></span><div><p class="eyebrow">Recommended operator · ${profile.name}</p><h3>${profile.name} is your clearest first move.</h3><p>${profile.copy} ${challenge}</p></div>`;
+  matchAuditLink.classList.remove('secondary');
+  matchAuditLink.textContent = 'Build my audit brief →';
+  matchAuditLink.href = `${auditUrl}?businessType=${encodeURIComponent(profile.businessType)}&challenge=${encodeURIComponent(`${profile.name}: ${challenge}`)}`;
+  matchResult.append(matchAuditLink);
+};
+
+document.querySelectorAll<HTMLButtonElement>('.match-options button').forEach((button) => {
+  button.addEventListener('click', () => {
+    const group = button.parentElement?.dataset.group as keyof typeof matchState | undefined;
+    const value = button.dataset.value;
+    if (!group || !value) return;
+    matchState[group] = value;
+    button.parentElement?.querySelectorAll('button').forEach((option) => option.classList.toggle('selected', option === button));
+    updateMatchResult();
+  });
 });
