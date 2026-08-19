@@ -1,6 +1,7 @@
 {
-  "buildCommand": "npm ci --legacy-peer-deps && npm run build",
-  "installCommand": "npm ci --legacy-peer-deps",
-  "framework": "next",
-  "nodeVersion": "18.x"
+  "buildCommand": "npm install && npm run build",
+  "installCommand": "npm install",
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "nodeVersion": "20.x"
 }
