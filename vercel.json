@@ -4,10 +4,11 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "nodeVersion": "20.x",
-  "rewrites": [
+  "redirects": [
     {
       "source": "/audit",
-      "destination": "https://mindreply-4cj9rb4o.manus.space/audit"
+      "destination": "https://mindreply-4cj9rb4o.manus.space/audit",
+      "permanent": false
     }
   ]
 }
